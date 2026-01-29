@@ -169,4 +169,43 @@ export const scraperApi = {
   },
 };
 
+// ========== AI Analysis API ==========
+
+export interface AIConfig {
+  provider: 'claude' | 'openai';
+  api_key: string;
+  model?: string;
+}
+
+export interface AIAnalysisRequest {
+  race_id: number;
+  config: AIConfig;
+  prompt_type: 'prediction' | 'analysis' | 'custom';
+  custom_prompt?: string;
+}
+
+export interface AIAnalysisResponse {
+  provider: string;
+  model: string;
+  analysis: string;
+  tokens_used?: number;
+}
+
+export interface AIModel {
+  id: string;
+  name: string;
+}
+
+export const aiApi = {
+  analyze: async (request: AIAnalysisRequest) => {
+    const response = await api.post<AIAnalysisResponse>('/ai/analyze', request);
+    return response.data;
+  },
+
+  getModels: async () => {
+    const response = await api.get<{ claude: AIModel[]; openai: AIModel[] }>('/ai/models');
+    return response.data;
+  },
+};
+
 export default api;

@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Save, RotateCcw, Brain, Calculator, Database } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Save, RotateCcw, Brain, Calculator, Database, Bot, Eye, EyeOff } from 'lucide-react';
 import type { PredictionWeights } from '../types';
+import { aiApi, type AIModel } from '../api/client';
 
 const defaultWeights: PredictionWeights = {
   win_rate_all: 0.20,
@@ -25,6 +26,41 @@ const weightLabels: Record<keyof PredictionWeights, string> = {
 export default function Settings() {
   const [weights, setWeights] = useState<PredictionWeights>(defaultWeights);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // AI設定
+  const [aiProvider, setAiProvider] = useState<'claude' | 'openai'>('claude');
+  const [claudeApiKey, setClaudeApiKey] = useState('');
+  const [openaiApiKey, setOpenaiApiKey] = useState('');
+  const [claudeModel, setClaudeModel] = useState('');
+  const [openaiModel, setOpenaiModel] = useState('');
+  const [showClaudeKey, setShowClaudeKey] = useState(false);
+  const [showOpenaiKey, setShowOpenaiKey] = useState(false);
+  const [models, setModels] = useState<{ claude: AIModel[]; openai: AIModel[] } | null>(null);
+
+  // 設定を読み込み
+  useEffect(() => {
+    const savedConfig = localStorage.getItem('aiConfig');
+    if (savedConfig) {
+      const config = JSON.parse(savedConfig);
+      setAiProvider(config.provider || 'claude');
+      if (config.provider === 'claude') {
+        setClaudeApiKey(config.apiKey || '');
+        setClaudeModel(config.model || '');
+      } else {
+        setOpenaiApiKey(config.apiKey || '');
+        setOpenaiModel(config.model || '');
+      }
+    }
+    
+    // 個別保存されたキーも読み込み
+    const claudeKey = localStorage.getItem('claudeApiKey');
+    const openaiKey = localStorage.getItem('openaiApiKey');
+    if (claudeKey) setClaudeApiKey(claudeKey);
+    if (openaiKey) setOpenaiApiKey(openaiKey);
+    
+    // モデル一覧を取得
+    aiApi.getModels().then(setModels).catch(console.error);
+  }, []);
 
   const handleWeightChange = (key: keyof PredictionWeights, value: number) => {
     setWeights((prev) => ({ ...prev, [key]: value }));
@@ -40,6 +76,22 @@ export default function Settings() {
     localStorage.setItem('predictionWeights', JSON.stringify(weights));
     await new Promise((resolve) => setTimeout(resolve, 500));
     setIsSaving(false);
+  };
+
+  const handleSaveAiConfig = () => {
+    // 両方のAPIキーを個別に保存
+    if (claudeApiKey) localStorage.setItem('claudeApiKey', claudeApiKey);
+    if (openaiApiKey) localStorage.setItem('openaiApiKey', openaiApiKey);
+    
+    // 現在選択中のプロバイダーの設定をaiConfigとして保存
+    const config = {
+      provider: aiProvider,
+      apiKey: aiProvider === 'claude' ? claudeApiKey : openaiApiKey,
+      model: aiProvider === 'claude' ? claudeModel : openaiModel,
+    };
+    localStorage.setItem('aiConfig', JSON.stringify(config));
+    
+    alert('AI設定を保存しました');
   };
 
   const totalWeight = Object.values(weights).reduce((sum, w) => sum + w, 0);
@@ -161,6 +213,129 @@ export default function Settings() {
           <p className="text-xs text-gray-500">
             ※ 再学習には1000レース以上のデータと数分の時間が必要です
           </p>
+        </div>
+      </div>
+
+      {/* AI連携設定 */}
+      <div className="bg-dark-200 rounded-xl border border-gray-800 overflow-hidden">
+        <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+          <Bot className="w-6 h-6 text-violet-400" />
+          <div>
+            <h2 className="font-bold text-white">AI連携設定</h2>
+            <p className="text-sm text-gray-400">Claude / ChatGPT APIの設定</p>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* デフォルトプロバイダー */}
+          <div>
+            <label className="block text-sm text-gray-400 mb-2">デフォルトプロバイダー</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setAiProvider('claude')}
+                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                  aiProvider === 'claude'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-dark-100 text-gray-400 hover:bg-gray-700'
+                }`}
+              >
+                Claude (Anthropic)
+              </button>
+              <button
+                onClick={() => setAiProvider('openai')}
+                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                  aiProvider === 'openai'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-dark-100 text-gray-400 hover:bg-gray-700'
+                }`}
+              >
+                ChatGPT (OpenAI)
+              </button>
+            </div>
+          </div>
+
+          {/* Claude API設定 */}
+          <div className="p-4 bg-dark-100 rounded-lg space-y-4">
+            <h3 className="font-medium text-orange-400">Claude (Anthropic)</h3>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">APIキー</label>
+              <div className="flex gap-2">
+                <input
+                  type={showClaudeKey ? 'text' : 'password'}
+                  value={claudeApiKey}
+                  onChange={(e) => setClaudeApiKey(e.target.value)}
+                  placeholder="sk-ant-..."
+                  className="flex-1 px-4 py-2 bg-dark-200 border border-gray-700 rounded-lg text-white focus:border-orange-500 focus:outline-none"
+                />
+                <button
+                  onClick={() => setShowClaudeKey(!showClaudeKey)}
+                  className="px-3 py-2 bg-dark-200 border border-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors"
+                >
+                  {showClaudeKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">モデル</label>
+              <select
+                value={claudeModel}
+                onChange={(e) => setClaudeModel(e.target.value)}
+                className="w-full px-4 py-2 bg-dark-200 border border-gray-700 rounded-lg text-white focus:border-orange-500 focus:outline-none"
+              >
+                <option value="">デフォルト (Claude Sonnet 4)</option>
+                {models?.claude.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* OpenAI API設定 */}
+          <div className="p-4 bg-dark-100 rounded-lg space-y-4">
+            <h3 className="font-medium text-green-400">ChatGPT (OpenAI)</h3>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">APIキー</label>
+              <div className="flex gap-2">
+                <input
+                  type={showOpenaiKey ? 'text' : 'password'}
+                  value={openaiApiKey}
+                  onChange={(e) => setOpenaiApiKey(e.target.value)}
+                  placeholder="sk-..."
+                  className="flex-1 px-4 py-2 bg-dark-200 border border-gray-700 rounded-lg text-white focus:border-green-500 focus:outline-none"
+                />
+                <button
+                  onClick={() => setShowOpenaiKey(!showOpenaiKey)}
+                  className="px-3 py-2 bg-dark-200 border border-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors"
+                >
+                  {showOpenaiKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">モデル</label>
+              <select
+                value={openaiModel}
+                onChange={(e) => setOpenaiModel(e.target.value)}
+                className="w-full px-4 py-2 bg-dark-200 border border-gray-700 rounded-lg text-white focus:border-green-500 focus:outline-none"
+              >
+                <option value="">デフォルト (GPT-4o)</option>
+                {models?.openai.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="text-xs text-gray-500">
+            ※ APIキーはブラウザのローカルストレージにのみ保存されます。サーバーには送信されません。
+          </div>
+
+          <button
+            onClick={handleSaveAiConfig}
+            className="w-full py-2 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-lg transition-colors"
+          >
+            AI設定を保存
+          </button>
         </div>
       </div>
 

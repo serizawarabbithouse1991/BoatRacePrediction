@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
-from app.routers import races, racers, predictions, results, scraper
+from app.routers import races, racers, predictions, results, scraper, ai_analysis
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -28,6 +28,7 @@ app.include_router(racers.router, prefix="/api/racers", tags=["racers"])
 app.include_router(predictions.router, prefix="/api/predictions", tags=["predictions"])
 app.include_router(results.router, prefix="/api/results", tags=["results"])
 app.include_router(scraper.router, prefix="/api/scraper", tags=["scraper"])
+app.include_router(ai_analysis.router, prefix="/api/ai", tags=["ai"])
 
 
 @app.get("/")

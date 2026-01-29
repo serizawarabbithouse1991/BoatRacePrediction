@@ -5,6 +5,7 @@ import { racesApi, predictionsApi } from '../api/client';
 import type { RaceDetail as RaceDetailType, StatisticalPrediction, MLPrediction, PredictionWeights } from '../types';
 import StatsChart from '../components/StatsChart';
 import PredictionPanel from '../components/PredictionPanel';
+import AIAnalysisPanel from '../components/AIAnalysisPanel';
 
 export default function RaceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -158,7 +159,7 @@ export default function RaceDetail() {
         </div>
 
         {/* 予想パネル */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
           <PredictionPanel
             statisticalPrediction={statisticalPrediction}
             mlPrediction={mlPrediction}
@@ -166,6 +167,9 @@ export default function RaceDetail() {
             onMLPredict={handleMLPredict}
             isLoading={isPredicting}
           />
+          
+          {/* AI分析パネル */}
+          <AIAnalysisPanel raceId={race.id} />
         </div>
       </div>
     </div>
