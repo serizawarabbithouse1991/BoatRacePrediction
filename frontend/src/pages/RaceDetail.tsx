@@ -6,6 +6,7 @@ import type { RaceDetail as RaceDetailType, StatisticalPrediction, MLPrediction,
 import StatsChart from '../components/StatsChart';
 import PredictionPanel from '../components/PredictionPanel';
 import AIAnalysisPanel from '../components/AIAnalysisPanel';
+import MAGIPanel from '../components/MAGIPanel';
 
 export default function RaceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -160,6 +161,9 @@ export default function RaceDetail() {
 
         {/* 予想パネル */}
         <div className="lg:col-span-1 space-y-6">
+          {/* MAGIシステム */}
+          <MAGIPanel raceId={race.id} />
+          
           <PredictionPanel
             statisticalPrediction={statisticalPrediction}
             mlPrediction={mlPrediction}

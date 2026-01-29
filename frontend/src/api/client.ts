@@ -196,6 +196,62 @@ export interface AIModel {
   name: string;
 }
 
+// ========== MAGI System API ==========
+
+export interface MAGIServiceConfig {
+  enabled: boolean;
+  api_key?: string;
+  model?: string;
+}
+
+export interface MAGIConfig {
+  claude: MAGIServiceConfig;
+  openai: MAGIServiceConfig;
+  gemini: MAGIServiceConfig;
+  grok: MAGIServiceConfig;
+}
+
+export interface MAGIResult {
+  name: string;
+  provider: string;
+  model: string;
+  status: 'success' | 'error' | 'disabled';
+  prediction?: string;
+  analysis?: string;
+  confidence?: string;
+  error?: string;
+  tokens_used?: number;
+}
+
+export interface MAGIResponse {
+  race_id: number;
+  results: MAGIResult[];
+  consensus?: string;
+  consensus_rate: number;
+  vote_detail: Record<string, number>;
+  active_count: number;
+}
+
+export const magiApi = {
+  analyze: async (raceId: number, config: MAGIConfig) => {
+    const response = await api.post<MAGIResponse>('/magi/analyze', {
+      race_id: raceId,
+      config,
+    });
+    return response.data;
+  },
+
+  getModels: async () => {
+    const response = await api.get<Record<string, AIModel[]>>('/magi/models');
+    return response.data;
+  },
+
+  getInfo: async () => {
+    const response = await api.get('/magi/info');
+    return response.data;
+  },
+};
+
 export const aiApi = {
   analyze: async (request: AIAnalysisRequest) => {
     const response = await api.post<AIAnalysisResponse>('/ai/analyze', request);
