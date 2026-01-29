@@ -409,23 +409,29 @@ async def get_magi_models():
     """各AIサービスの利用可能モデル"""
     return {
         "claude": [
+            {"id": "claude-opus-4-20250514", "name": "Claude Opus 4.5 (最高性能)"},
             {"id": "claude-sonnet-4-20250514", "name": "Claude Sonnet 4 (推奨)"},
             {"id": "claude-3-5-sonnet-20241022", "name": "Claude 3.5 Sonnet"},
-            {"id": "claude-3-5-haiku-20241022", "name": "Claude 3.5 Haiku"},
+            {"id": "claude-3-5-haiku-20241022", "name": "Claude 3.5 Haiku (高速)"},
         ],
         "openai": [
+            {"id": "gpt-5.2", "name": "GPT-5.2 (最新)"},
+            {"id": "gpt-4.5-preview", "name": "GPT-4.5 Preview"},
             {"id": "gpt-4o", "name": "GPT-4o (推奨)"},
-            {"id": "gpt-4o-mini", "name": "GPT-4o mini"},
-            {"id": "gpt-4-turbo", "name": "GPT-4 Turbo"},
+            {"id": "gpt-4o-mini", "name": "GPT-4o mini (高速)"},
+            {"id": "o1", "name": "o1 (推論特化)"},
+            {"id": "o1-mini", "name": "o1 mini"},
         ],
         "gemini": [
             {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash (推奨)"},
+            {"id": "gemini-2.0-pro", "name": "Gemini 2.0 Pro"},
             {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro"},
-            {"id": "gemini-1.5-flash", "name": "Gemini 1.5 Flash"},
+            {"id": "gemini-1.5-flash", "name": "Gemini 1.5 Flash (高速)"},
         ],
         "grok": [
-            {"id": "grok-beta", "name": "Grok Beta (推奨)"},
-            {"id": "grok-2", "name": "Grok 2"},
+            {"id": "grok-3", "name": "Grok 3 (最新)"},
+            {"id": "grok-2", "name": "Grok 2 (推奨)"},
+            {"id": "grok-beta", "name": "Grok Beta"},
         ]
     }
 
