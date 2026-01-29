@@ -128,22 +128,50 @@ class BoatRaceScraper:
     ):
         """過去データを一括取得"""
         current_date = start_date
+        total_days = (end_date - start_date).days + 1
+        processed = 0
+        success_count = 0
+        error_count = 0
+        
+        print(f"=== Starting historical scrape for {self.VENUES.get(venue_code, venue_code)} ===")
+        print(f"Period: {start_date} to {end_date} ({total_days} days)")
         
         while current_date <= end_date:
+            processed += 1
+            print(f"[{processed}/{total_days}] Processing {current_date}...")
+            
             try:
-                await self.scrape_venue_races(venue_code, current_date, db)
+                # 出走表を取得
+                races = await self.scrape_venue_races(venue_code, current_date, db)
                 
-                # 結果も取得
-                for race_no in range(1, 13):
-                    try:
-                        await self.scrape_race_result(venue_code, current_date, race_no, db)
-                    except Exception:
-                        continue
+                if races:
+                    # 結果も取得
+                    for race_no in range(1, 13):
+                        try:
+                            await self.scrape_race_result(venue_code, current_date, race_no, db)
+                        except Exception:
+                            continue
+                    
+                    success_count += 1
+                    print(f"  ✓ Got {len(races)} races")
+                else:
+                    print(f"  - No races found (maybe no event)")
                         
             except Exception as e:
-                print(f"Error scraping {current_date}: {e}")
+                error_count += 1
+                print(f"  ✗ Error: {e}")
             
             current_date += timedelta(days=1)
+            
+            # サーバー負荷軽減のため待機（2秒）
+            time.sleep(2)
+        
+        print(f"=== Completed: {success_count} success, {error_count} errors ===")
+        return {
+            "total_days": total_days,
+            "success": success_count,
+            "errors": error_count
+        }
     
     def _parse_race_info(
         self, 
