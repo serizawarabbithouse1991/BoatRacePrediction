@@ -418,7 +418,7 @@ export default function Settings() {
                 onChange={(e) => setGeminiModel(e.target.value)}
                 className="w-full px-4 py-2 bg-dark-200 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
               >
-                <option value="">デフォルト (Gemini 2.0 Flash)</option>
+                <option value="">デフォルト (Gemini 2.0 Pro)</option>
                 {models?.gemini?.map((m) => (
                   <option key={m.id} value={m.id}>{m.name}</option>
                 ))}
@@ -463,7 +463,7 @@ export default function Settings() {
                 onChange={(e) => setGrokModel(e.target.value)}
                 className="w-full px-4 py-2 bg-dark-200 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:outline-none"
               >
-                <option value="">デフォルト (Grok Beta)</option>
+                <option value="">デフォルト (Grok 3)</option>
                 {models?.grok?.map((m) => (
                   <option key={m.id} value={m.id}>{m.name}</option>
                 ))}

@@ -221,11 +221,12 @@ async def get_available_models():
             {"id": "claude-3-5-haiku-20241022", "name": "Claude 3.5 Haiku (高速)"},
         ],
         "openai": [
-            {"id": "gpt-5.2", "name": "GPT-5.2 (最新)"},
+            {"id": "gpt-5.2", "name": "GPT-5.2 (最高性能)"},
             {"id": "gpt-4.5-preview", "name": "GPT-4.5 Preview"},
+            {"id": "o1-pro", "name": "o1 Pro (推論最高性能)"},
+            {"id": "o1", "name": "o1 (推論特化)"},
             {"id": "gpt-4o", "name": "GPT-4o (推奨)"},
             {"id": "gpt-4o-mini", "name": "GPT-4o mini (高速)"},
-            {"id": "o1", "name": "o1 (推論特化)"},
             {"id": "o1-mini", "name": "o1 mini"},
         ]
     }

@@ -205,7 +205,7 @@ async def call_openai(api_key: str, model: str, prompt: str) -> dict:
 
 async def call_gemini(api_key: str, model: str, prompt: str) -> dict:
     """Google Gemini API呼び出し"""
-    model_name = model or "gemini-2.0-flash"
+    model_name = model or "gemini-2.0-pro"
     
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -246,7 +246,7 @@ async def call_grok(api_key: str, model: str, prompt: str) -> dict:
                 "Content-Type": "application/json",
             },
             json={
-                "model": model or "grok-beta",
+                "model": model or "grok-3",
                 "messages": [
                     {"role": "system", "content": "あなたはボートレース予想の専門家です。"},
                     {"role": "user", "content": prompt}
@@ -264,7 +264,7 @@ async def call_grok(api_key: str, model: str, prompt: str) -> dict:
         return {
             "text": data["choices"][0]["message"]["content"],
             "tokens": data.get("usage", {}).get("total_tokens", 0),
-            "model": model or "grok-beta"
+            "model": model or "grok-3"
         }
 
 
@@ -415,21 +415,27 @@ async def get_magi_models():
             {"id": "claude-3-5-haiku-20241022", "name": "Claude 3.5 Haiku (高速)"},
         ],
         "openai": [
-            {"id": "gpt-5.2", "name": "GPT-5.2 (最新)"},
+            {"id": "gpt-5.2", "name": "GPT-5.2 (最高性能)"},
             {"id": "gpt-4.5-preview", "name": "GPT-4.5 Preview"},
+            {"id": "o1-pro", "name": "o1 Pro (推論最高性能)"},
+            {"id": "o1", "name": "o1 (推論特化)"},
             {"id": "gpt-4o", "name": "GPT-4o (推奨)"},
             {"id": "gpt-4o-mini", "name": "GPT-4o mini (高速)"},
-            {"id": "o1", "name": "o1 (推論特化)"},
             {"id": "o1-mini", "name": "o1 mini"},
         ],
         "gemini": [
-            {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash (推奨)"},
-            {"id": "gemini-2.0-pro", "name": "Gemini 2.0 Pro"},
+            {"id": "gemini-2.0-ultra", "name": "Gemini 2.0 Ultra (最高性能)"},
+            {"id": "gemini-2.0-pro-exp", "name": "Gemini 2.0 Pro Experimental"},
+            {"id": "gemini-2.0-pro", "name": "Gemini 2.0 Pro (推奨)"},
+            {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash"},
+            {"id": "gemini-2.0-flash-thinking", "name": "Gemini 2.0 Flash Thinking (推論)"},
             {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro"},
             {"id": "gemini-1.5-flash", "name": "Gemini 1.5 Flash (高速)"},
         ],
         "grok": [
-            {"id": "grok-3", "name": "Grok 3 (最新)"},
+            {"id": "grok-3", "name": "Grok 3 (最高性能)"},
+            {"id": "grok-3-turbo", "name": "Grok 3 Turbo (高速)"},
+            {"id": "grok-2-vision", "name": "Grok 2 Vision (画像対応)"},
             {"id": "grok-2", "name": "Grok 2 (推奨)"},
             {"id": "grok-beta", "name": "Grok Beta"},
         ]
