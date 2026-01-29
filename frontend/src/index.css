@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --boat-1: #FFFFFF;
+  --boat-2: #000000;
+  --boat-3: #E53935;
+  --boat-4: #1E88E5;
+  --boat-5: #FDD835;
+  --boat-6: #43A047;
+}
+
+body {
+  background-color: #020617;
+  color: #f3f4f6;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+/* ボート番号の背景色 */
+.boat-bg-1 { background-color: #FFFFFF; color: #000000; }
+.boat-bg-2 { background-color: #000000; color: #FFFFFF; border: 1px solid #4b5563; }
+.boat-bg-3 { background-color: #dc2626; color: #FFFFFF; }
+.boat-bg-4 { background-color: #2563eb; color: #FFFFFF; }
+.boat-bg-5 { background-color: #eab308; color: #000000; }
+.boat-bg-6 { background-color: #16a34a; color: #FFFFFF; }
+
+/* カスタムスクロールバー */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Tailwind v4 Theme */
+@theme {
+  --color-boat-1: #FFFFFF;
+  --color-boat-2: #000000;
+  --color-boat-3: #E53935;
+  --color-boat-4: #1E88E5;
+  --color-boat-5: #FDD835;
+  --color-boat-6: #43A047;
+  
+  --color-dark-100: #1e293b;
+  --color-dark-200: #0f172a;
+  --color-dark-300: #020617;
+  
+  --font-family-sans: 'Noto Sans JP', sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+}
